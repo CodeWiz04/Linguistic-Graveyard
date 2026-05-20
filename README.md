@@ -1,4 +1,4 @@
-#  Linguistic Graveyard
+# 🪦 Linguistic Graveyard
 
 > *Every two weeks, a language dies forever. Here are the ones still breathing.*
 
