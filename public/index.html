@@ -1,969 +1,1009 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Linguistic Graveyard — Languages We Are Losing</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:ital@0;1&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --black: #0a0806;
-        --deep: #110e0b;
-        --surface: #1a1510;
-        --grave: #231e18;
-        --stone: #3a3228;
-        --ash: #6b5f52;
-        --bone: #c4b49a;
-        --parchment: #e8d9c0;
-        --fog: #9b8e7e;
-        --blood: #8b1a1a;
-        --rust: #a0522d;
-        --moss: #4a6741;
-        --candle: #d4a017;
-        --ghost: rgba(196, 180, 154, 0.06);
-      }
-
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        background: var(--black);
-        color: var(--bone);
-        font-family: "Crimson Pro", Georgia, serif;
-        font-size: 18px;
-        line-height: 1.7;
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
-
-      /* Noise texture overlay */
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.4;
-      }
-
-      /* Vignette */
-      body::after {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: radial-gradient(
-          ellipse at center,
-          transparent 40%,
-          rgba(0, 0, 0, 0.7) 100%
-        );
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      .container {
-        position: relative;
-        z-index: 1;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 2rem;
-      }
-
-      /* ---- HEADER ---- */
-      header {
-        text-align: center;
-        padding: 5rem 2rem 3rem;
-        position: relative;
-      }
-
-      .header-ornament {
-        font-size: 1.2rem;
-        color: var(--ash);
-        letter-spacing: 0.4em;
-        text-transform: uppercase;
-        font-family: "Space Mono", monospace;
-        font-size: 0.65rem;
-        margin-bottom: 1.5rem;
-        opacity: 0.7;
-      }
-
-      h1 {
-        font-family: "UnifrakturMaguntia", serif;
-        font-size: clamp(3rem, 9vw, 6.5rem);
-        color: var(--parchment);
-        line-height: 1;
-        margin-bottom: 0.5rem;
-        text-shadow:
-          0 0 60px rgba(212, 160, 23, 0.15),
-          0 2px 4px rgba(0, 0, 0, 0.8);
-        letter-spacing: -0.01em;
-      }
-
-      .tagline {
-        font-family: "Crimson Pro", serif;
-        font-style: italic;
-        font-size: 1.15rem;
-        color: var(--fog);
-        margin-bottom: 1rem;
-      }
-
-      .stat-bar {
-        display: flex;
-        justify-content: center;
-        gap: 3rem;
-        margin: 2rem 0;
-        font-family: "Space Mono", monospace;
-        font-size: 0.7rem;
-        color: var(--ash);
-        letter-spacing: 0.05em;
-      }
-
-      .stat-bar span strong {
-        display: block;
-        font-size: 1.4rem;
-        color: var(--candle);
-        font-family: "Crimson Pro", serif;
-        font-weight: 600;
-      }
-
-      /* Divider */
-      .divider {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin: 2rem 0;
-        color: var(--stone);
-      }
-      .divider::before,
-      .divider::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--stone));
-      }
-      .divider::after {
-        background: linear-gradient(to left, transparent, var(--stone));
-      }
-      .divider-glyph {
-        font-size: 1.1rem;
-        color: var(--ash);
-      }
-
-      /* ---- SEARCH ---- */
-      .search-section {
-        margin: 1rem 0 3rem;
-      }
-
-      .search-label {
-        display: block;
-        font-family: "Space Mono", monospace;
-        font-size: 0.65rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--ash);
-        margin-bottom: 0.75rem;
-      }
-
-      .search-row {
-        display: flex;
-        gap: 0.75rem;
-        align-items: stretch;
-      }
-
-      #search-input {
-        flex: 1;
-        background: var(--surface);
-        border: 1px solid var(--stone);
-        color: var(--parchment);
-        font-family: "Crimson Pro", serif;
-        font-size: 1.15rem;
-        padding: 0.85rem 1.25rem;
-        outline: none;
-        transition:
-          border-color 0.3s,
-          box-shadow 0.3s;
-        caret-color: var(--candle);
-      }
-
-      #search-input:focus {
-        border-color: var(--ash);
-        box-shadow:
-          0 0 0 1px var(--ash),
-          inset 0 0 20px rgba(212, 160, 23, 0.03);
-      }
-
-      #search-input::placeholder {
-        color: var(--stone);
-        font-style: italic;
-      }
-
-      .btn {
-        background: transparent;
-        border: 1px solid var(--ash);
-        color: var(--bone);
-        font-family: "Space Mono", monospace;
-        font-size: 0.7rem;
-        letter-spacing: 0.1em;
-        padding: 0.85rem 1.5rem;
-        cursor: pointer;
-        text-transform: uppercase;
-        transition: all 0.25s;
-        white-space: nowrap;
-      }
-
-      .btn:hover {
-        background: var(--ash);
-        color: var(--black);
-      }
-      .btn:active {
-        transform: scale(0.98);
-      }
-
-      .btn-ghost {
-        border-color: var(--stone);
-        color: var(--fog);
-      }
-      .btn-ghost:hover {
-        background: var(--stone);
-        color: var(--parchment);
-      }
-
-      .search-hints {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 1rem;
-      }
-
-      .hint-chip {
-        background: none;
-        border: 1px solid var(--grave);
-        color: var(--ash);
-        font-family: "Space Mono", monospace;
-        font-size: 0.6rem;
-        padding: 0.3rem 0.75rem;
-        cursor: pointer;
-        letter-spacing: 0.08em;
-        transition: all 0.2s;
-      }
-      .hint-chip:hover {
-        border-color: var(--ash);
-        color: var(--bone);
-        background: var(--ghost);
-      }
-
-      /* ---- STATUS / ERROR ---- */
-      #status {
-        min-height: 2rem;
-        margin-bottom: 1.5rem;
-        font-family: "Space Mono", monospace;
-        font-size: 0.7rem;
-        letter-spacing: 0.05em;
-      }
-
-      .status-loading {
-        color: var(--ash);
-        animation: pulse 1.5s infinite;
-      }
-      .status-error {
-        color: var(--blood);
-      }
-      .status-info {
-        color: var(--fog);
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 0.5;
-        }
-        50% {
-          opacity: 1;
-        }
-      }
-
-      /* ---- RESULTS GRID ---- */
-      #results {
-        display: grid;
-        gap: 1.5rem;
-      }
-
-      /* ---- LANGUAGE CARD ---- */
-      .lang-card {
-        background: var(--surface);
-        border: 1px solid var(--grave);
-        border-left: 3px solid var(--stone);
-        padding: 1.75rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        animation: fadeUp 0.4s ease both;
-      }
-
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .lang-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(
-          to right,
-          transparent,
-          var(--stone),
-          transparent
-        );
-      }
-
-      .lang-card:hover {
-        border-color: var(--ash);
-        border-left-color: var(--candle);
-        background: var(--grave);
-        box-shadow:
-          0 4px 30px rgba(0, 0, 0, 0.5),
-          inset 0 0 30px rgba(212, 160, 23, 0.02);
-      }
-
-      /* Urgency left border color */
-      .lang-card[data-urgency="critical"] {
-        border-left-color: var(--blood);
-      }
-      .lang-card[data-urgency="severe"] {
-        border-left-color: var(--rust);
-      }
-      .lang-card[data-urgency="dormant"] {
-        border-left-color: #555;
-      }
-
-      .card-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 0.75rem;
-      }
-
-      .lang-name {
-        font-family: "Crimson Pro", serif;
-        font-size: 1.6rem;
-        font-weight: 600;
-        color: var(--parchment);
-        line-height: 1.15;
-      }
-
-      .lang-family {
-        font-family: "Space Mono", monospace;
-        font-size: 0.6rem;
-        color: var(--ash);
-        letter-spacing: 0.08em;
-        margin-top: 0.2rem;
-      }
-
-      .endangered-badge {
-        font-family: "Space Mono", monospace;
-        font-size: 0.58rem;
-        padding: 0.2rem 0.6rem;
-        border: 1px solid currentColor;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-
-      .badge-critical {
-        color: var(--blood);
-        border-color: var(--blood);
-      }
-      .badge-severe {
-        color: var(--rust);
-        border-color: var(--rust);
-      }
-      .badge-definitely {
-        color: var(--candle);
-        border-color: var(--candle);
-      }
-      .badge-vulnerable {
-        color: var(--moss);
-        border-color: var(--moss);
-      }
-      .badge-dormant {
-        color: var(--ash);
-        border-color: var(--ash);
-      }
-      .badge-unknown {
-        color: var(--stone);
-        border-color: var(--stone);
-      }
-
-      .card-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-        margin-top: 0.75rem;
-        font-size: 0.85rem;
-      }
-
-      .meta-item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.1rem;
-      }
-
-      .meta-label {
-        font-family: "Space Mono", monospace;
-        font-size: 0.58rem;
-        letter-spacing: 0.12em;
-        color: var(--ash);
-        text-transform: uppercase;
-      }
-
-      .meta-value {
-        color: var(--bone);
-        font-size: 0.95rem;
-      }
-
-      .expiry-value {
-        color: var(--candle);
-        font-style: italic;
-      }
-
-      .card-description {
-        margin-top: 1rem;
-        font-size: 0.95rem;
-        color: var(--fog);
-        line-height: 1.6;
-        font-style: italic;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      /* ---- DETAIL PANEL ---- */
-      #detail-panel {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 100;
-        overflow-y: auto;
-        background: rgba(10, 8, 6, 0.97);
-        padding: 2rem;
-        animation: fadeIn 0.3s ease;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      #detail-panel.open {
-        display: block;
-      }
-
-      .detail-inner {
-        max-width: 780px;
-        margin: 0 auto;
-        padding: 3rem 0;
-      }
-
-      .detail-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-family: "Space Mono", monospace;
-        font-size: 0.65rem;
-        letter-spacing: 0.1em;
-        color: var(--ash);
-        cursor: pointer;
-        margin-bottom: 2.5rem;
-        text-transform: uppercase;
-        transition: color 0.2s;
-        background: none;
-        border: none;
-      }
-      .detail-back:hover {
-        color: var(--parchment);
-      }
-
-      .detail-heading {
-        font-family: "UnifrakturMaguntia", serif;
-        font-size: clamp(2.5rem, 7vw, 5rem);
-        color: var(--parchment);
-        line-height: 1;
-        margin-bottom: 0.5rem;
-      }
-
-      .detail-iso {
-        font-family: "Space Mono", monospace;
-        font-size: 0.7rem;
-        color: var(--ash);
-        letter-spacing: 0.2em;
-        margin-bottom: 2rem;
-      }
-
-      .detail-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 1.5rem;
-        margin: 2rem 0;
-      }
-
-      .detail-stat {
-        background: var(--surface);
-        border: 1px solid var(--grave);
-        padding: 1.25rem;
-      }
-
-      .detail-stat-label {
-        font-family: "Space Mono", monospace;
-        font-size: 0.58rem;
-        letter-spacing: 0.15em;
-        color: var(--ash);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-      }
-
-      .detail-stat-value {
-        font-family: "Crimson Pro", serif;
-        font-size: 1.4rem;
-        color: var(--parchment);
-        font-weight: 600;
-      }
-
-      .detail-expiry {
-        color: var(--candle);
-      }
-
-      .detail-section {
-        margin: 2rem 0;
-      }
-      .detail-section-title {
-        font-family: "Space Mono", monospace;
-        font-size: 0.65rem;
-        letter-spacing: 0.2em;
-        color: var(--ash);
-        text-transform: uppercase;
-        margin-bottom: 0.75rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid var(--grave);
-      }
-
-      .detail-text {
-        font-size: 1rem;
-        color: var(--fog);
-        line-height: 1.75;
-      }
-
-      .wiki-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        color: var(--ash);
-        font-family: "Space Mono", monospace;
-        font-size: 0.6rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        text-decoration: none;
-        border-bottom: 1px solid var(--stone);
-        transition: all 0.2s;
-        margin-top: 0.75rem;
-      }
-      .wiki-link:hover {
-        color: var(--bone);
-        border-color: var(--ash);
-      }
-
-      /* ---- EPITAPH TOMBSTONE ---- */
-      .tombstone {
-        text-align: center;
-        margin: 3rem auto 1rem;
-        max-width: 320px;
-      }
-
-      .tombstone svg {
-        width: 100%;
-        max-width: 220px;
-        height: auto;
-        margin: 0 auto;
-        display: block;
-      }
-
-      /* ---- EMPTY / INTRO STATE ---- */
-      #intro {
-        text-align: center;
-        padding: 4rem 2rem;
-        color: var(--stone);
-      }
-
-      .intro-number {
-        font-family: "UnifrakturMaguntia", serif;
-        font-size: 5rem;
-        color: var(--grave);
-        line-height: 1;
-      }
-
-      .intro-text {
-        font-style: italic;
-        color: var(--ash);
-        max-width: 500px;
-        margin: 1rem auto;
-        line-height: 1.8;
-      }
-
-      /* Scrollbar */
-      ::-webkit-scrollbar {
-        width: 5px;
-      }
-      ::-webkit-scrollbar-track {
-        background: var(--black);
-      }
-      ::-webkit-scrollbar-thumb {
-        background: var(--stone);
-        border-radius: 2px;
-      }
-
-      /* Result count */
-      .result-count {
-        font-family: "Space Mono", monospace;
-        font-size: 0.62rem;
-        letter-spacing: 0.1em;
-        color: var(--ash);
-        margin-bottom: 1.5rem;
-        text-transform: uppercase;
-      }
-
-      /* Loading skeleton */
-      .skeleton {
-        background: linear-gradient(
-          90deg,
-          var(--surface) 25%,
-          var(--grave) 50%,
-          var(--surface) 75%
-        );
-        background-size: 200% 100%;
-        animation: shimmer 1.4s infinite;
-        height: 120px;
-        border: 1px solid var(--grave);
-      }
-      @keyframes shimmer {
-        0% {
-          background-position: 200% 0;
-        }
-        100% {
-          background-position: -200% 0;
-        }
-      }
-
-      /* Mobile tweaks */
-      @media (max-width: 600px) {
-        .stat-bar {
-          gap: 1.5rem;
-        }
-        .search-row {
-          flex-direction: column;
-        }
-        .card-top {
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- DETAIL PANEL (overlay) -->
-    <div id="detail-panel" role="dialog" aria-modal="true">
-      <div class="detail-inner container" id="detail-content">
-        <!-- populated by JS -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linguistic Graveyard — Languages We Are Losing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ═══════════════════════════════════════════
+       DESIGN TOKENS
+       Palette: charcoal dark + warm amber accent
+       ═══════════════════════════════════════════ */
+    :root {
+      /* Backgrounds — layered depth */
+      --bg-base:       #141418;   /* page canvas */
+      --bg-surface:    #1c1c22;   /* card bg */
+      --bg-raised:     #242430;   /* hovered card / sidebar */
+      --bg-overlay:    #0f0f13ee; /* detail panel */
+      --bg-input:      #18181f;   /* input field */
+      --bg-chip:       #1e1e27;   /* chips */
+
+      /* Borders */
+      --border-subtle:  #2a2a36;
+      --border-default: #363646;
+      --border-strong:  #4a4a60;
+
+      /* Text */
+      --text-primary:   #e8e6f0;  /* headings */
+      --text-secondary: #a09db8;  /* body */
+      --text-muted:     #5e5c78;  /* labels, metadata */
+      --text-dim:       #3d3b55;  /* placeholders */
+
+      /* Accent — warm amber, consistent with the "dying flame" theme */
+      --accent:         #e8a838;
+      --accent-dim:     rgba(232,168,56,0.12);
+      --accent-glow:    rgba(232,168,56,0.20);
+
+      /* Semantic status colors */
+      --red:            #e05252;   /* critically endangered */
+      --red-dim:        rgba(224,82,82,0.12);
+      --orange:         #d4763b;   /* severely endangered */
+      --orange-dim:     rgba(212,118,59,0.12);
+      --yellow:         #c9963a;   /* definitely endangered */
+      --yellow-dim:     rgba(201,150,58,0.12);
+      --green:          #4a9268;   /* awakening / vulnerable */
+      --green-dim:      rgba(74,146,104,0.12);
+      --slate:          #5a5a72;   /* dormant */
+      --slate-dim:      rgba(90,90,114,0.12);
+
+      /* Shadows */
+      --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
+      --shadow-md:  0 4px 16px rgba(0,0,0,0.5);
+      --shadow-lg:  0 8px 32px rgba(0,0,0,0.6);
+      --shadow-card-hover: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px var(--border-strong);
+
+      /* Radii */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+
+      /* Type */
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-serif:   'Crimson Pro', Georgia, serif;
+      --font-ui:      'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-base);
+      color: var(--text-secondary);
+      font-family: var(--font-ui);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Subtle radial ambient light — avoids the flat look */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(232,168,56,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ══════════════════ LAYOUT ══════════════════ */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ══════════════════ HEADER ══════════════════ */
+    header {
+      text-align: center;
+      padding: 4.5rem 1.5rem 2.5rem;
+      position: relative;
+    }
+
+    .header-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+    .header-eyebrow::before,
+    .header-eyebrow::after {
+      content: '—';
+      opacity: 0.4;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.01em;
+      /* Layered glow: warm amber halo + crisp drop shadow */
+      letter-spacing: -0.02em;
+      text-shadow:
+        0 0 80px var(--accent-glow),
+        0 0 24px rgba(232,168,56,0.12),
+        0 2px 6px rgba(0,0,0,0.7);
+    }
+
+    .tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+      letter-spacing: 0.01em;
+    }
+
+    /* ══════════════════ STAT BAR ══════════════════ */
+    .stat-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin: 2.5rem auto 0;
+      max-width: 560px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .stat-item {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      text-align: center;
+      position: relative;
+    }
+    .stat-item + .stat-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 20%; bottom: 20%;
+      width: 1px;
+      background: var(--border-subtle);
+    }
+
+    .stat-number {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--accent);
+      line-height: 1.2;
+      margin-bottom: 0.15rem;
+    }
+    .stat-label {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ══════════════════ DIVIDER ══════════════════ */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 2.5rem 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+    .divider-glyph {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    /* ══════════════════ SEARCH ══════════════════ */
+    .search-section { margin-bottom: 2rem; }
+
+    .search-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: stretch;
+    }
+
+    .search-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+      line-height: 0;
+    }
+
+    #search-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 0.95rem;
+      padding: 0.8rem 1rem 0.8rem 2.75rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      caret-color: var(--accent);
+    }
+    #search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    #search-input::placeholder { color: var(--text-dim); }
+
+    /* Primary action button */
+    .btn-primary {
+      background: var(--accent);
+      color: #0f0e0a;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0 1.5rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(232,168,56,0.25);
+    }
+    .btn-primary:hover {
+      background: #f0b840;
+      box-shadow: 0 4px 16px rgba(232,168,56,0.35);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* Secondary / ghost button */
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0 1.25rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover {
+      background: var(--bg-raised);
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    /* Quick-search chips */
+    .search-hints {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+    }
+
+    .hint-chip {
+      background: var(--bg-chip);
+      border: 1px solid var(--border-subtle);
+      border-radius: 100px;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.25rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .hint-chip:hover {
+      background: var(--bg-raised);
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    /* ══════════════════ STATUS ══════════════════ */
+    #status {
+      min-height: 1.8rem;
+      margin-bottom: 1rem;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .status-loading { color: var(--text-muted); }
+    .status-loading::before {
+      content: '';
+      display: inline-block;
+      width: 10px; height: 10px;
+      border: 2px solid var(--border-default);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status-error { color: var(--red); }
+    .status-info { color: var(--text-muted); }
+
+    /* ══════════════════ RESULTS ══════════════════ */
+    #results { display: grid; gap: 1px; }
+
+    /* ══════════════════ CARD ══════════════════ */
+    .lang-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 1.75rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.35s ease both;
+      margin-bottom: 0.75rem;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Left urgency accent strip */
+    .lang-card::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 12%; bottom: 12%;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--border-strong);
+      transition: background 0.2s, height 0.2s;
+    }
+    .lang-card[data-urgency="critical"]::after { background: var(--red); }
+    .lang-card[data-urgency="severe"]::after   { background: var(--orange); }
+    .lang-card[data-urgency="awakening"]::after { background: var(--green); }
+    .lang-card[data-urgency="dormant"]::after  { background: var(--slate); }
+
+    .lang-card:hover {
+      background: var(--bg-raised);
+      border-color: var(--border-default);
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-1px);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .lang-name {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .lang-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+      font-style: italic;
+    }
+
+    .lang-family-tag {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* Endangered badge */
+    .endangered-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 100px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    .badge-critical  { background: var(--red-dim);    color: var(--red); }
+    .badge-severe    { background: var(--orange-dim);  color: var(--orange); }
+    .badge-definitely{ background: var(--yellow-dim);  color: var(--yellow); }
+    .badge-vulnerable{ background: var(--green-dim);   color: var(--green); }
+    .badge-dormant   { background: var(--slate-dim);   color: var(--slate); }
+    .badge-unknown   { background: var(--bg-raised);   color: var(--text-dim); }
+
+    /* Card meta row */
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .meta-item { display: flex; flex-direction: column; gap: 0.15rem; }
+
+    .meta-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .meta-value {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    .expiry-value {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .card-description {
+      margin-top: 0.85rem;
+      font-size: 0.88rem;
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ══════════════════ DETAIL PANEL ══════════════════ */
+    #detail-panel {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      overflow-y: auto;
+      background: var(--bg-overlay);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    #detail-panel.open { display: block; }
+
+    .detail-inner {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    /* Sticky top nav bar inside panel */
+    .detail-nav {
+      position: sticky;
+      top: 0;
+      background: var(--bg-overlay);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1rem 0;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .detail-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      transition: background 0.18s, color 0.18s;
+      text-transform: uppercase;
+    }
+    .detail-back:hover {
+      background: var(--bg-raised);
+      color: var(--text-primary);
+    }
+
+    .detail-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+      text-shadow: 0 0 40px var(--accent-dim);
+    }
+
+    .detail-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .detail-iso {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      background: var(--bg-raised);
+      border: 1px solid var(--border-subtle);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Stats grid */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.75rem;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .detail-stat {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.1rem 1.25rem;
+      transition: border-color 0.2s;
+    }
+    .detail-stat:hover { border-color: var(--border-default); }
+
+    .detail-stat-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.4rem;
+    }
+
+    .detail-stat-value {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .detail-expiry { color: var(--accent); }
+
+    /* Content sections */
+    .detail-section { margin: 1.75rem 0; }
+
+    .detail-section-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .detail-text {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .wiki-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-decoration: none;
+      margin-top: 0.75rem;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid rgba(232,168,56,0.25);
+      border-radius: var(--radius-sm);
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .wiki-link:hover {
+      background: var(--accent-dim);
+      border-color: rgba(232,168,56,0.4);
+    }
+
+    /* Tombstone */
+    .tombstone {
+      text-align: center;
+      margin: 3rem auto 0;
+      max-width: 240px;
+      opacity: 0.9;
+      filter: grayscale(0.2);
+      transition: opacity 0.3s;
+    }
+    .tombstone:hover { opacity: 1; }
+    .tombstone svg { width: 100%; height: auto; display: block; }
+
+    /* ══════════════════ INTRO / EMPTY STATE ══════════════════ */
+    #intro {
+      text-align: center;
+      padding: 4rem 2rem 5rem;
+    }
+
+    .intro-glyph {
+      font-family: var(--font-display);
+      font-size: 4rem;
+      color: var(--border-default);
+      line-height: 1;
+      margin-bottom: 1.25rem;
+    }
+
+    .intro-text {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 460px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.8;
+    }
+
+    .intro-source {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ══════════════════ SKELETONS ══════════════════ */
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        var(--bg-surface) 25%,
+        var(--bg-raised) 50%,
+        var(--bg-surface) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      height: 130px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 0.75rem;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ══════════════════ SCROLLBAR ══════════════════ */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
+
+    /* ══════════════════ EMPTY RESULTS ══════════════════ */
+    .empty-state {
+      text-align: center;
+      padding: 3.5rem 2rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      background: var(--bg-surface);
+    }
+    .empty-state-icon {
+      font-size: 2rem;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+    .empty-state-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .empty-state-sub {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 0.4rem;
+    }
+
+    /* ══════════════════ FOOTER ══════════════════ */
+    footer {
+      text-align: center;
+      padding: 2.5rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border-subtle);
+      margin-top: 3rem;
+    }
+
+    /* ══════════════════ RESPONSIVE ══════════════════ */
+    @media (max-width: 600px) {
+      .stat-bar { flex-direction: column; }
+      .stat-item + .stat-item::before { top: 0; bottom: auto; left: 20%; right: 20%; width: auto; height: 1px; }
+      .search-row { flex-direction: column; }
+      .card-top { flex-direction: column; gap: 0.6rem; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ DETAIL PANEL ═══ -->
+<div id="detail-panel" role="dialog" aria-modal="true" aria-label="Language detail">
+  <div class="detail-inner container" id="detail-content">
+    <!-- populated by JS -->
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="container">
+
+  <header>
+    <div class="header-eyebrow">Memento Lingua</div>
+    <h1>Linguistic Graveyard</h1>
+    <p class="tagline">Every two weeks, a language dies. Here are the ones still breathing.</p>
+
+    <div class="stat-bar">
+      <div class="stat-item">
+        <span class="stat-number">~7,000</span>
+        <span class="stat-label">Languages today</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">~3,000</span>
+        <span class="stat-label">Endangered</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">1 / 14 days</span>
+        <span class="stat-label">Goes silent</span>
       </div>
     </div>
+  </header>
 
-    <!-- MAIN -->
-    <div class="container">
-      <header>
-        <div class="header-ornament">
-          †&nbsp;&nbsp;Memento Lingua&nbsp;&nbsp;†
-        </div>
-        <h1>Linguistic Graveyard</h1>
-        <p class="tagline">
-          Every two weeks, a language dies. Here are the ones still breathing.
-        </p>
+  <div class="divider"><span class="divider-glyph">✦</span></div>
 
-        <div class="stat-bar">
-          <span><strong>~7,000</strong>languages exist today</span>
-          <span><strong>~3,000</strong>are endangered</span>
-          <span><strong>1 per 14 days</strong>goes silent forever</span>
-        </div>
-      </header>
-
-      <div class="divider"><span class="divider-glyph">✦</span></div>
-
-      <section class="search-section">
-        <label class="search-label" for="search-input"
-          >Search by language name, country, or family</label
-        >
-        <div class="search-row">
-          <input
-            id="search-input"
-            type="text"
-            placeholder="e.g. Cornish, Papua New Guinea, Turkic…"
-            autocomplete="off"
-            spellcheck="false"
-            maxlength="100"
-          />
-          <button class="btn" id="search-btn" onclick="doSearch()">
-            Unearth
-          </button>
-          <button class="btn btn-ghost" id="random-btn" onclick="doRandom()">
-            Random
-          </button>
-        </div>
-        <div class="search-hints">
-          <button class="hint-chip" onclick="quickSearch('Australia')">
-            Australia
-          </button>
-          <button class="hint-chip" onclick="quickSearch('Siberia')">
-            Siberia
-          </button>
-          <button class="hint-chip" onclick="quickSearch('Amazonian')">
-            Amazonian
-          </button>
-          <button class="hint-chip" onclick="quickSearch('Celtic')">
-            Celtic
-          </button>
-          <button class="hint-chip" onclick="quickSearch('Caucasus')">
-            Caucasus
-          </button>
-          <button class="hint-chip" onclick="quickSearch('Papua')">
-            Papua New Guinea
-          </button>
-        </div>
-      </section>
-
-      <div id="status"></div>
-      <div id="results"></div>
-
-      <div id="intro">
-        <div class="intro-number">†</div>
-        <p class="intro-text">
-          Each entry here is a world of metaphors, kinship structures, and ways
-          of knowing that exist nowhere else. When the last speaker dies, we
-          lose not just words — we lose an entire grammar of being.
-        </p>
-        <p
-          style="
-            font-family: &quot;Space Mono&quot;, monospace;
-            font-size: 0.6rem;
-            color: var(--stone);
-            letter-spacing: 0.1em;
-            margin-top: 2rem;
-          "
-        >
-          DATA: ENDANGERED LANGUAGES PROJECT · WIKIPEDIA
-        </p>
+  <section class="search-section">
+    <label class="search-label" for="search-input">Search by language name, country, or family</label>
+    <div class="search-row">
+      <div class="search-wrap">
+        <span class="search-icon">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <input
+          id="search-input"
+          type="text"
+          placeholder="e.g. Cornish, Papua New Guinea, Celtic…"
+          autocomplete="off"
+          spellcheck="false"
+          maxlength="100"
+        />
       </div>
+      <button class="btn-primary" id="search-btn" onclick="doSearch()">Search</button>
+      <button class="btn-ghost" id="random-btn" onclick="doRandom()">Random</button>
     </div>
+    <div class="search-hints">
+      <button class="hint-chip" onclick="quickSearch('Australia')">🌏 Australia</button>
+      <button class="hint-chip" onclick="quickSearch('Siberia')">❄️ Siberia</button>
+      <button class="hint-chip" onclick="quickSearch('Celtic')">☘️ Celtic</button>
+      <button class="hint-chip" onclick="quickSearch('Caucasus')">⛰️ Caucasus</button>
+      <button class="hint-chip" onclick="quickSearch('Papua')">🌿 Papua New Guinea</button>
+      <button class="hint-chip" onclick="quickSearch('isolate')">🔮 Language Isolates</button>
+    </div>
+  </section>
 
-    <script>
-      let searchTimeout = null;
-      let currentQuery = "";
+  <div id="status"></div>
+  <div id="results"></div>
 
-      const searchInput = document.getElementById("search-input");
-      const statusEl = document.getElementById("status");
-      const resultsEl = document.getElementById("results");
-      const introEl = document.getElementById("intro");
-      const detailPanel = document.getElementById("detail-panel");
+  <div id="intro">
+    <div class="intro-glyph">†</div>
+    <p class="intro-text">
+      Each entry here is a world of metaphors, kinship structures, and ways of knowing
+      that exist nowhere else. When the last speaker dies, we lose not just words —
+      we lose an entire grammar of being.
+    </p>
+    <p class="intro-source">Data: Endangered Languages Project · UNESCO · Wikipedia</p>
+  </div>
 
-      // Enter key triggers search
-      searchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") doSearch();
-      });
+  <footer>Linguistic Graveyard &nbsp;·&nbsp; Data: Endangered Languages Project &amp; Wikipedia &nbsp;·&nbsp; Built to remember</footer>
 
-      function quickSearch(term) {
-        searchInput.value = term;
-        doSearch();
-      }
+</div>
 
-      function setStatus(msg, type = "info") {
-        statusEl.textContent = msg;
-        statusEl.className = `status-${type}`;
-      }
+<script>
+  let currentQuery = '';
 
-      function showSkeletons(n = 3) {
-        resultsEl.innerHTML = Array(n)
-          .fill('<div class="skeleton"></div>')
-          .join("");
-        introEl.style.display = "none";
-      }
+  const searchInput = document.getElementById('search-input');
+  const statusEl    = document.getElementById('status');
+  const resultsEl   = document.getElementById('results');
+  const introEl     = document.getElementById('intro');
+  const detailPanel = document.getElementById('detail-panel');
 
-      async function doSearch() {
-        const query = searchInput.value.trim();
+  searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 
-        // --- Edge case: empty input ---
-        if (!query) {
-          setStatus(
-            "Please enter a language name, country, or family.",
-            "error",
-          );
-          return;
-        }
+  function quickSearch(term) {
+    searchInput.value = term;
+    currentQuery = '';   // allow re-submitting same term via chip
+    doSearch();
+  }
 
-        // --- Edge case: same query re-submitted ---
-        if (query === currentQuery) return;
-        currentQuery = query;
+  function setStatus(msg, type = 'info') {
+    statusEl.className = `status-${type}`;
+    statusEl.textContent = msg;
+  }
 
-        showSkeletons(4);
-        setStatus("Searching the graveyard…", "loading");
+  function showSkeletons(n = 3) {
+    resultsEl.innerHTML = Array(n).fill('<div class="skeleton"></div>').join('');
+    introEl.style.display = 'none';
+  }
 
-        try {
-          const res = await fetchWithTimeout(
-            `/api/languages?query=${encodeURIComponent(query)}`,
-          );
-          const data = await res.json();
+  /* ── SEARCH ── */
+  async function doSearch() {
+    const query = searchInput.value.trim();
+    if (!query) {
+      setStatus('Please enter a language name, country, or family.', 'error');
+      return;
+    }
+    if (query === currentQuery) return;
+    currentQuery = query;
 
-          if (!res.ok) {
-            handleApiError(data);
-            return;
-          }
+    showSkeletons(4);
+    setStatus('Searching the graveyard…', 'loading');
 
-          if (!data.languages || data.languages.length === 0) {
-            setStatus("", "info");
-            resultsEl.innerHTML = `
-          <div style="text-align:center;padding:4rem 2rem;color:var(--ash);font-style:italic;">
-            <div style="font-size:2rem;margin-bottom:1rem;opacity:0.3;">∅</div>
-            No languages found for "<strong style="color:var(--bone)">${escHtml(query)}</strong>".<br>
-            <span style="font-size:0.85rem;">Try a broader term, country name, or language family.</span>
+    try {
+      const res  = await fetchWithTimeout(`/api/languages?query=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      if (!res.ok) { handleApiError(data); return; }
+
+      if (!data.languages || data.languages.length === 0) {
+        setStatus('', 'info');
+        resultsEl.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">∅</div>
+            <div class="empty-state-text">No languages found for <strong style="color:var(--text-primary)">"${escHtml(query)}"</strong></div>
+            <div class="empty-state-sub">Try a broader term, country name, or language family.</div>
           </div>`;
-            return;
-          }
-
-          let statusText = `${data.total > data.languages.length ? data.total + " found, showing " + data.languages.length : data.languages.length + " language" + (data.languages.length !== 1 ? "s" : "") + " found"}`;
-          if (data.fallback) {
-            statusText +=
-              " — showing local fallback data because the remote API is unavailable.";
-          }
-          setStatus(statusText, "info");
-          renderResults(data.languages);
-        } catch (err) {
-          if (err.name === "AbortError" || err.message === "TIMEOUT") {
-            setStatus(
-              "⚠ The API is taking too long. Please try again.",
-              "error",
-            );
-          } else {
-            setStatus("⚠ Network error. Are you connected?", "error");
-          }
-          resultsEl.innerHTML = "";
-        }
+        return;
       }
 
-      async function doRandom() {
-        currentQuery = "";
-        searchInput.value = "";
-        showSkeletons(1);
-        setStatus("Unearthing a random language…", "loading");
+      const count = data.languages.length;
+      setStatus(`${count} language${count !== 1 ? 's' : ''} found`, 'info');
+      renderResults(data.languages);
 
-        try {
-          const res = await fetchWithTimeout("/api/random");
-          const data = await res.json();
+    } catch (err) {
+      const msg = (err.name === 'AbortError' || err.message === 'TIMEOUT')
+        ? 'The search timed out. Please try again.'
+        : 'Network error — are you connected?';
+      setStatus('⚠ ' + msg, 'error');
+      resultsEl.innerHTML = '';
+    }
+  }
 
-          if (!res.ok) {
-            handleApiError(data);
-            return;
-          }
+  /* ── RANDOM ── */
+  async function doRandom() {
+    currentQuery = '';
+    searchInput.value = '';
+    showSkeletons(1);
+    setStatus('Unearthing a random language…', 'loading');
 
-          setStatus("1 language found", "info");
-          renderResults([data]);
-        } catch (err) {
-          setStatus("⚠ Could not fetch a random language. Try again.", "error");
-          resultsEl.innerHTML = "";
-        }
-      }
+    try {
+      const res  = await fetchWithTimeout('/api/random');
+      const data = await res.json();
+      if (!res.ok) { handleApiError(data); return; }
+      setStatus('1 language found', 'info');
+      renderResults([data]);
+    } catch {
+      setStatus('⚠ Could not fetch a random language. Try again.', 'error');
+      resultsEl.innerHTML = '';
+    }
+  }
 
-      function handleApiError(data) {
-        const msgs = {
-          TIMEOUT:
-            "⌛ The Endangered Languages API timed out. Try again in a moment.",
-          BAD_INPUT: "⚠ Invalid input.",
-          API_ERROR:
-            "⚠ The remote API returned an error. It may be down temporarily.",
-          API_UNAVAILABLE:
-            "⚠ The Endangered Languages API is unavailable or blocked. Try again later.",
-          NOT_FOUND: "⚠ Not found.",
-        };
-        setStatus(msgs[data.error] || "⚠ Something went wrong.", "error");
-        resultsEl.innerHTML = "";
-      }
+  function handleApiError(data) {
+    const msgs = {
+      TIMEOUT:   'The API timed out. Try again in a moment.',
+      BAD_INPUT: 'Invalid input.',
+      API_ERROR: 'Remote API error. Try again shortly.',
+      NOT_FOUND: 'Not found.',
+    };
+    setStatus('⚠ ' + (msgs[data.error] || 'Something went wrong.'), 'error');
+    resultsEl.innerHTML = '';
+  }
 
-      // Fetch with 10s client-side timeout
-      function fetchWithTimeout(url, ms = 10000) {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), ms);
-        return fetch(url, { signal: controller.signal }).finally(() =>
-          clearTimeout(timer),
-        );
-      }
+  /* ── FETCH WITH TIMEOUT ── */
+  function fetchWithTimeout(url, ms = 10000) {
+    const ctrl  = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(timer));
+  }
 
-      function renderResults(languages) {
-        resultsEl.innerHTML = "";
-        languages.forEach((lang, i) => {
-          const card = buildCard(lang, i);
-          resultsEl.appendChild(card);
-        });
-      }
+  /* ── RENDER CARD LIST ── */
+  function renderResults(languages) {
+    resultsEl.innerHTML = '';
+    languages.forEach((lang, i) => resultsEl.appendChild(buildCard(lang, i)));
+  }
 
-      function buildCard(lang, index) {
-        const card = document.createElement("div");
-        card.className = "lang-card";
-        card.style.animationDelay = `${index * 60}ms`;
+  function buildCard(lang, index) {
+    const card = document.createElement('div');
+    card.className = 'lang-card';
+    card.style.animationDelay = `${index * 55}ms`;
 
-        const urgency = getUrgency(lang.endangermentLevel);
-        card.dataset.urgency = urgency;
+    const urgency = getUrgency(lang.endangermentLevel);
+    card.dataset.urgency = urgency;
 
-        const badge = getBadge(lang.endangermentLevel);
-        const countries = lang.countries.slice(0, 3).join(", ") || "—";
-        const speakers =
-          lang.speakerCount !== null
-            ? lang.speakerCount.toLocaleString()
-            : "Unknown";
-        const expiry = lang.expiryEstimate || "—";
+    const badge    = getBadge(lang.endangermentLevel);
+    const countries = (lang.countries || []).slice(0, 3).join(', ') || '—';
+    const speakers  = lang.speakerCount != null ? Number(lang.speakerCount).toLocaleString() : 'Unknown';
+    const expiry    = lang.expiryEstimate || '—';
 
-        card.innerHTML = `
+    card.innerHTML = `
       <div class="card-top">
         <div>
           <div class="lang-name">${escHtml(lang.name)}</div>
-          ${lang.altNames?.length ? `<div class="lang-family" style="color:var(--fog);font-size:0.7rem;font-style:italic">also: ${escHtml(lang.altNames.slice(0, 3).join(", "))}</div>` : ""}
-          ${lang.family ? `<div class="lang-family">${escHtml(lang.family)}</div>` : ""}
+          ${lang.altNames?.length ? `<div class="lang-sub">also: ${escHtml(lang.altNames.slice(0,3).join(', '))}</div>` : ''}
+          ${lang.family ? `<div class="lang-family-tag">${escHtml(lang.family)}</div>` : ''}
         </div>
-        <div class="endangered-badge ${badge.cls}">${badge.label}</div>
+        <div class="endangered-badge ${badge.cls}">
+          <span class="badge-dot"></span>${badge.label}
+        </div>
       </div>
       <div class="card-meta">
         <div class="meta-item">
@@ -974,36 +1014,44 @@
           <span class="meta-label">Where</span>
           <span class="meta-value">${escHtml(countries)}</span>
         </div>
-        ${lang.iso639 ? `<div class="meta-item"><span class="meta-label">ISO 639-3</span><span class="meta-value" style="font-family:'Space Mono',monospace;font-size:0.8rem">${escHtml(lang.iso639)}</span></div>` : ""}
+        ${lang.iso639 ? `<div class="meta-item"><span class="meta-label">ISO 639-3</span><span class="meta-value" style="font-family:monospace">${escHtml(lang.iso639)}</span></div>` : ''}
         <div class="meta-item">
-          <span class="meta-label">Estimated Silence</span>
+          <span class="meta-label">Estimated silence</span>
           <span class="meta-value expiry-value">${escHtml(expiry)}</span>
         </div>
       </div>
-      ${lang.description ? `<div class="card-description">${escHtml(lang.description.slice(0, 180))}…</div>` : ""}
+      ${lang.description ? `<div class="card-description">${escHtml(lang.description.slice(0, 180))}…</div>` : ''}
     `;
 
-        card.addEventListener("click", () => openDetail(lang));
-        return card;
-      }
+    card.addEventListener('click', () => openDetail(lang));
+    return card;
+  }
 
-      async function openDetail(lang) {
-        const panel = document.getElementById("detail-panel");
-        const content = document.getElementById("detail-content");
+  /* ── DETAIL PANEL ── */
+  async function openDetail(lang) {
+    const content = document.getElementById('detail-content');
+    const badge   = getBadge(lang.endangermentLevel);
+    const speakers = lang.speakerCount != null ? Number(lang.speakerCount).toLocaleString() : 'Unknown';
+    const countries = (lang.countries || []).join(', ') || '—';
+    const expiry    = lang.expiryEstimate || 'Unknown';
 
-        const badge = getBadge(lang.endangermentLevel);
-        const speakers =
-          lang.speakerCount !== null
-            ? lang.speakerCount.toLocaleString()
-            : "Unknown";
-        const countries = lang.countries.join(", ") || "—";
-        const expiry = lang.expiryEstimate || "Unknown";
+    content.innerHTML = `
+      <div class="detail-nav">
+        <button class="detail-back" onclick="closeDetail()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back to results
+        </button>
+        <div class="endangered-badge ${badge.cls}">
+          <span class="badge-dot"></span>${badge.label}
+        </div>
+      </div>
 
-        content.innerHTML = `
-      <button class="detail-back" onclick="closeDetail()">← Back to Results</button>
-      <div class="endangered-badge ${badge.cls}" style="margin-bottom:1rem">${badge.label}</div>
       <h2 class="detail-heading">${escHtml(lang.name)}</h2>
-      ${lang.iso639 ? `<div class="detail-iso">ISO 639-3: ${escHtml(lang.iso639)}</div>` : '<div class="detail-iso" style="margin-bottom:2rem"></div>'}
+
+      <div class="detail-meta-row">
+        ${lang.iso639 ? `<span class="detail-iso">ISO 639-3: ${escHtml(lang.iso639)}</span>` : ''}
+        ${lang.family ? `<span class="detail-iso">${escHtml(lang.family)}</span>` : ''}
+      </div>
 
       <div class="detail-grid">
         <div class="detail-stat">
@@ -1012,142 +1060,127 @@
         </div>
         <div class="detail-stat">
           <div class="detail-stat-label">Where Spoken</div>
-          <div class="detail-stat-value" style="font-size:1.1rem">${escHtml(countries)}</div>
+          <div class="detail-stat-value" style="font-size:1.05rem">${escHtml(countries)}</div>
         </div>
-        ${lang.family ? `<div class="detail-stat"><div class="detail-stat-label">Language Family</div><div class="detail-stat-value" style="font-size:1rem">${escHtml(lang.family)}</div></div>` : ""}
+        ${lang.family ? `
+        <div class="detail-stat">
+          <div class="detail-stat-label">Language Family</div>
+          <div class="detail-stat-value" style="font-size:1rem">${escHtml(lang.family)}</div>
+        </div>` : ''}
         <div class="detail-stat">
           <div class="detail-stat-label">Estimated Silence</div>
           <div class="detail-stat-value detail-expiry">${escHtml(expiry)}</div>
         </div>
       </div>
 
-      ${
-        lang.altNames?.length > 0
-          ? `
+      ${lang.altNames?.length ? `
         <div class="detail-section">
           <div class="detail-section-title">Also Known As</div>
-          <div class="detail-text">${escHtml(lang.altNames.join(" · "))}</div>
-        </div>`
-          : ""
-      }
+          <div class="detail-text">${escHtml(lang.altNames.join(' · '))}</div>
+        </div>` : ''}
 
-      ${
-        lang.description
-          ? `
+      ${lang.description ? `
         <div class="detail-section">
-          <div class="detail-section-title">Description</div>
+          <div class="detail-section-title">About</div>
           <div class="detail-text">${escHtml(lang.description)}</div>
-        </div>`
-          : ""
-      }
+        </div>` : ''}
 
       <div id="wiki-section">
-        <div class="detail-section-title" style="font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--ash);text-transform:uppercase;margin-top:2rem;padding-bottom:0.5rem;border-bottom:1px solid var(--grave);">
-          Loading Wikipedia…
+        <div class="detail-section">
+          <div class="detail-section-title">Wikipedia</div>
+          <div class="detail-text" style="color:var(--text-dim);font-style:italic">Loading…</div>
         </div>
       </div>
 
       <div class="tombstone">
-        <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="90" width="200" height="175" rx="4" fill="#1a1510" stroke="#3a3228" stroke-width="1.5"/>
-          <path d="M10 90 Q10 10 110 10 Q210 10 210 90Z" fill="#1a1510" stroke="#3a3228" stroke-width="1.5"/>
-          <text x="110" y="72" font-family="UnifrakturMaguntia,serif" font-size="13" fill="#6b5f52" text-anchor="middle">R.I.P.</text>
-          <text x="110" y="130" font-family="Crimson Pro,serif" font-size="12" fill="#c4b49a" text-anchor="middle">${escHtml(lang.name.slice(0, 22))}</text>
-          <text x="110" y="152" font-family="Space Mono,monospace" font-size="8" fill="#6b5f52" text-anchor="middle">${lang.iso639 ? escHtml(lang.iso639.toUpperCase()) : "· · ·"}</text>
-          <text x="110" y="185" font-family="Crimson Pro,serif" font-size="9" fill="#3a3228" text-anchor="middle" font-style="italic">Here lies a world</text>
-          <text x="110" y="200" font-family="Crimson Pro,serif" font-size="9" fill="#3a3228" text-anchor="middle" font-style="italic">of words unspoken</text>
-          <line x1="60" y1="220" x2="160" y2="220" stroke="#2a2520" stroke-width="1"/>
-          <text x="110" y="240" font-family="Space Mono,monospace" font-size="7.5" fill="#2a2520" text-anchor="middle">${escHtml(expiry)}</text>
+        <svg viewBox="0 0 220 290" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="12" y="92" width="196" height="182" rx="3" fill="#1e1e2a" stroke="#3d3b55" stroke-width="1.5"/>
+          <path d="M12 92 Q12 12 110 12 Q208 12 208 92Z" fill="#1e1e2a" stroke="#3d3b55" stroke-width="1.5"/>
+          <text x="110" y="74" font-family="Playfair Display,serif" font-size="14" fill="#7b78a8" text-anchor="middle" font-weight="700" letter-spacing="3">R.I.P.</text>
+          <text x="110" y="134" font-family="Crimson Pro,serif" font-size="14" fill="#e8e6f0" text-anchor="middle" font-weight="600">${escHtml(lang.name.slice(0,20))}</text>
+          <text x="110" y="155" font-family="monospace" font-size="9" fill="#7b78a8" text-anchor="middle">${lang.iso639 ? escHtml(lang.iso639.toUpperCase()) : '· · ·'}</text>
+          <text x="110" y="193" font-family="Crimson Pro,serif" font-size="10.5" fill="#5e5c78" text-anchor="middle" font-style="italic">Here lies a world</text>
+          <text x="110" y="210" font-family="Crimson Pro,serif" font-size="10.5" fill="#5e5c78" text-anchor="middle" font-style="italic">of words unspoken</text>
+          <line x1="65" y1="228" x2="155" y2="228" stroke="#363646" stroke-width="1"/>
+          <text x="110" y="247" font-family="monospace" font-size="8" fill="#5e5c78" text-anchor="middle">${escHtml(expiry)}</text>
         </svg>
       </div>
     `;
 
-        panel.classList.add("open");
-        panel.scrollTop = 0;
-        document.body.style.overflow = "hidden";
+    detailPanel.classList.add('open');
+    detailPanel.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
 
-        // Fetch Wikipedia asynchronously — don't block the panel from opening
-        loadWikiSection(lang.name);
-      }
+    loadWikiSection(lang.name);
+  }
 
-      async function loadWikiSection(name) {
-        const wikiSection = document.getElementById("wiki-section");
-        if (!wikiSection) return;
+  async function loadWikiSection(name) {
+    const wikiSection = document.getElementById('wiki-section');
+    if (!wikiSection) return;
 
-        try {
-          const res = await fetchWithTimeout(
-            `/api/wiki/${encodeURIComponent(name)}`,
-            8000,
-          );
-          const data = await res.json();
+    try {
+      const res  = await fetchWithTimeout(`/api/wiki/${encodeURIComponent(name)}`, 8000);
+      const data = await res.json();
 
-          if (data.extract) {
-            wikiSection.innerHTML = `
+      if (data.extract) {
+        wikiSection.innerHTML = `
           <div class="detail-section">
             <div class="detail-section-title">Wikipedia</div>
-            <div class="detail-text">${escHtml(data.extract.slice(0, 600))}${data.extract.length > 600 ? "…" : ""}</div>
-            ${data.wikiUrl ? `<a class="wiki-link" href="${escHtml(data.wikiUrl)}" target="_blank" rel="noopener">Read on Wikipedia ↗</a>` : ""}
+            <div class="detail-text">${escHtml(data.extract.slice(0, 600))}${data.extract.length > 600 ? '…' : ''}</div>
+            ${data.wikiUrl ? `<a class="wiki-link" href="${escHtml(data.wikiUrl)}" target="_blank" rel="noopener">
+              Read on Wikipedia
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>` : ''}
           </div>`;
-          } else {
-            wikiSection.innerHTML = `<div class="detail-section" style="color:var(--stone);font-style:italic;font-size:0.9rem">No Wikipedia article found for this language.</div>`;
-          }
-        } catch {
-          wikiSection.innerHTML = `<div class="detail-section" style="color:var(--stone);font-style:italic;font-size:0.85rem">Wikipedia unavailable.</div>`;
-        }
+      } else {
+        wikiSection.innerHTML = `
+          <div class="detail-section">
+            <div class="detail-section-title">Wikipedia</div>
+            <div class="detail-text" style="color:var(--text-dim);font-style:italic;font-size:0.88rem">No Wikipedia article found for this language.</div>
+          </div>`;
       }
+    } catch {
+      wikiSection.innerHTML = '';
+    }
+  }
 
-      function closeDetail() {
-        detailPanel.classList.remove("open");
-        document.body.style.overflow = "";
-      }
+  function closeDetail() {
+    detailPanel.classList.remove('open');
+    document.body.style.overflow = '';
+  }
 
-      // Close panel on Escape
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeDetail();
-      });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
 
-      function getUrgency(level) {
-        if (!level) return "unknown";
-        const l = level.toLowerCase();
-        if (
-          l.includes("critical") ||
-          l.includes("extinct") ||
-          l.includes("dormant")
-        )
-          return "critical";
-        if (l.includes("severe") || l.includes("moribund")) return "severe";
-        return "other";
-      }
+  /* ── HELPERS ── */
+  function getUrgency(level) {
+    if (!level) return 'unknown';
+    const l = level.toLowerCase();
+    if (l.includes('dormant') || l.includes('extinct')) return 'dormant';
+    if (l.includes('awakening')) return 'awakening';
+    if (l.includes('critically')) return 'critical';
+    if (l.includes('severely')) return 'severe';
+    return 'other';
+  }
 
-      function getBadge(level) {
-        if (!level) return { cls: "badge-unknown", label: "Status Unknown" };
-        const l = level.toLowerCase();
-        if (l.includes("dormant"))
-          return { cls: "badge-dormant", label: "Dormant" };
-        if (l.includes("awakening"))
-          return { cls: "badge-vulnerable", label: "Awakening" };
-        if (l.includes("critically"))
-          return { cls: "badge-critical", label: "Critically Endangered" };
-        if (l.includes("severely"))
-          return { cls: "badge-severe", label: "Severely Endangered" };
-        if (l.includes("definitely"))
-          return { cls: "badge-definitely", label: "Definitely Endangered" };
-        if (l.includes("vulnerable"))
-          return { cls: "badge-vulnerable", label: "Vulnerable" };
-        if (l.includes("safe"))
-          return { cls: "badge-vulnerable", label: "Safe" };
-        return { cls: "badge-unknown", label: level };
-      }
+  function getBadge(level) {
+    if (!level) return { cls: 'badge-unknown', label: 'Unknown' };
+    const l = level.toLowerCase();
+    if (l.includes('dormant'))     return { cls: 'badge-dormant',    label: 'Dormant' };
+    if (l.includes('awakening'))   return { cls: 'badge-vulnerable', label: 'Awakening' };
+    if (l.includes('critically'))  return { cls: 'badge-critical',   label: 'Critical' };
+    if (l.includes('severely'))    return { cls: 'badge-severe',     label: 'Severe' };
+    if (l.includes('definitely'))  return { cls: 'badge-definitely', label: 'Endangered' };
+    if (l.includes('vulnerable'))  return { cls: 'badge-vulnerable', label: 'Vulnerable' };
+    if (l.includes('safe'))        return { cls: 'badge-vulnerable', label: 'Safe' };
+    return { cls: 'badge-unknown', label: level };
+  }
 
-      function escHtml(str) {
-        if (!str) return "";
-        return String(str)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#39;");
-      }
-    </script>
-  </body>
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+</script>
+</body>
 </html>
